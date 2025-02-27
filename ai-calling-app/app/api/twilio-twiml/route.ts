@@ -4,12 +4,14 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const message =
     url.searchParams.get("message") || "Hello, this is an AI call.";
+  const callId = url.searchParams.get("callId") || Date.now().toString();
 
+  // Use the TTS endpoint to get OpenAI-generated speech
   const twiml = `
     <Response>
-      <Say voice="Polly.Amy" language="en-GB">${message}</Say>
-      <Pause length="1"/>
-      <Say voice="Polly.Amy" language="en-GB">Thank you for listening. Goodbye.</Say>
+      <Play>${process.env.BASE_URL}/api/tts?text=${encodeURIComponent(
+    message
+  )}&callId=${callId}</Play>
     </Response>
   `;
 

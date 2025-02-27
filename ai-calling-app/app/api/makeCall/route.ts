@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import twilio from "twilio";
 import { OpenAI } from "openai";
 import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
 
 dotenv.config();
 
@@ -56,7 +58,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // Generate AI response from OpenAI
+    // Generate AI text response from OpenAI
     const gptResponse = await openai.chat.completions.create({
       model: "gpt-4-turbo",
       messages: [
@@ -72,11 +74,16 @@ export async function POST(req: Request) {
       gptResponse.choices[0].message?.content ||
       "Hello, how can I assist you today?";
 
-    // Make the call using Twilio
+    // Generate a unique ID for this call
+    const callId = Date.now().toString();
+
+    // Make the call using Twilio - pass the callId to the TwiML endpoint
     const call = await twilioClient.calls.create({
       url: `${
         process.env.BASE_URL
-      }/api/twilio-twiml?message=${encodeURIComponent(aiMessage)}`,
+      }/api/twilio-twiml?message=${encodeURIComponent(
+        aiMessage
+      )}&callId=${callId}`,
       to: phoneNumber,
       from: process.env.TWILIO_PHONE_NUMBER!,
     });
