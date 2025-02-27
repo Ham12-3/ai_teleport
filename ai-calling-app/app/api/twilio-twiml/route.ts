@@ -5,14 +5,15 @@ export async function GET(req: Request) {
   const message =
     url.searchParams.get("message") || "Hello, this is an AI call.";
 
-  // TwiML that plays the audio from our TTS endpoint
-  const twiml = `
-    <Response>
-      <Play>${process.env.BASE_URL}/api/tts?text=${encodeURIComponent(
-    message
-  )}</Play>
-    </Response>
-  `;
+  // TwiML with proper XML declaration
+  const twiml = `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+<Say>
+Hello Munashe how are you?
+
+</Say>
+ 
+</Response>`;
 
   return new NextResponse(twiml, {
     headers: {
@@ -20,3 +21,7 @@ export async function GET(req: Request) {
     },
   });
 }
+
+// <Play>${process.env.BASE_URL}/api/tts?text=${encodeURIComponent(
+//     message
+//   )}</Play>
