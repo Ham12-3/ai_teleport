@@ -7,11 +7,10 @@ export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
     const text = url.searchParams.get("text");
-    const callId = url.searchParams.get("callId");
 
-    if (!text || !callId) {
+    if (!text) {
       return NextResponse.json(
-        { error: "Text and callId are required" },
+        { error: "Text parameter is required" },
         { status: 400 }
       );
     }
